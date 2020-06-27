@@ -19,12 +19,27 @@ aws configure
 
 The folowing code uses Windows Powershell helper scripts (PS1 files). The format for Linux scripts is the same.
 
+#### Deploy network
+
 Create AWS-Stack from YML:
 ```bash
-./create.ps1
+./create-network.ps1
 ```
 
 Update existing AWS-Stack with new configuration:
 ```bash
-./update.ps1
+./update-network.ps1
+```
+
+
+#### Deploy servers
+
+Create AWS-Stack from YML:
+```bash
+./create-servers.ps1
+```
+
+Update existing AWS-Stack with new configuration:
+```bash
+./update-servers.ps1
 ```
