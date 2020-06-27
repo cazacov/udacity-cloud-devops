@@ -49,9 +49,12 @@ Resources:
           cd /var/www/html
           aws s3 cp s3://udacity-demo-1/udacity.zip .
           unzip -o udacity.zip
+          rm udacity.zip
       ImageId: ami-003634241a8fcdec0
       SecurityGroups:
       - Ref: WebServerSecGroup
+      IamInstanceProfile: 
+        Ref: WebS3InstanceProfile      
       InstanceType: t3.medium
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
@@ -141,4 +144,41 @@ Resources:
         ListenerArn: !Ref 'Listener'
         Priority: 1
   
+# Instance profile contains the IAM Role name(s) that we want to associate to our auto scaling EC2 Servers
+  WebS3InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      Path: "/"
+      InstanceProfileName: !Sub "${EnvironmentName}-WebS3ReadonlyInstanceProfile"
+      Roles:
+      - !Ref S3ReadonlyRole
+
+  S3ReadonlyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::Region}-${EnvironmentName}-S3ReadonlyRole"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
   
+  RolePolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: s3readonly
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action:
+          - s3:Get*
+          - s3:List
+          Resource: "*"
+      Roles:
+      - !Ref S3ReadonlyRole  
