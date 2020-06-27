@@ -64,12 +64,14 @@ Resources:
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
+      AutoScalingGroupName: 
+        !Sub "${EnvironmentName}-ASG"
       VPCZoneIdentifier:
       - Fn::ImportValue: 
           !Sub "${EnvironmentName}-PRIV-NETS"
       LaunchConfigurationName:
         Ref: WebAppLaunchConfig
-      MinSize: '3'
+      MinSize: '4'
       MaxSize: '5'
       TargetGroupARNs:
       - Ref: WebAppTargetGroup
@@ -88,6 +90,7 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
+      Name: !Sub "${EnvironmentName}-WebAppTG"
 
 # Load-balancer security group
   LBSecGroup:
