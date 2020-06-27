@@ -7,6 +7,7 @@
 
 ### Prerequisites
 - AWS CLI tool version 2 installed
+    - Installation instructions: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
 - AWS key with programmatic access and admin permissions
 
 Configure AWS console
@@ -17,29 +18,28 @@ aws configure
 
 ### Deployment
 
-The folowing code uses Windows Powershell helper scripts (PS1 files). The format for Linux scripts is the same.
-
 #### Deploy network
 
-Create AWS-Stack from YML:
+Create network AWS-Stack from YML:
 ```bash
-./create-network.ps1
+./create-network.sh
 ```
 
-Update existing AWS-Stack with new configuration:
+Update existing network AWS-Stack with the new configuration:
 ```bash
-./update-network.ps1
+./update-network.sh
 ```
 
+The network stack exposes parameters that are then used in the servers stack. 
 
 #### Deploy servers
 
-Create AWS-Stack from YML:
+Create servers AWS-Stack from YML:
 ```bash
-./create-servers.ps1
+./create-servers.sh
 ```
 
-Update existing AWS-Stack with new configuration:
+Update servers network AWS-Stack with the new configuration:
 ```bash
-./update-servers.ps1
+./update-servers.sh
 ```
