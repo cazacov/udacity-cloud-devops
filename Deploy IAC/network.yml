@@ -18,6 +18,16 @@ Parameters:
     Type: String
     Default: 10.0.0.0/16
 
+  PublicSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
+    Type: String
+    Default: 10.0.0.0/24
+
+  PublicSubnet2CIDR:
+      Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+      Type: String
+      Default: 10.0.1.0/24
+
 # Outputs: 
   # This is also optional.
   # Bonus points for useful outputs!
@@ -25,6 +35,9 @@ Parameters:
   # it's nice to output the URL to it here, so that we don't have to go to the console to get it.
 
 Resources:
+
+# VPC
+
   VPC: 
     Type: AWS::EC2::VPC
     Properties:
@@ -33,7 +46,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref EnvironmentName
-  
+
+# Internet Gateway with Attachment
   InternetGateway:
       Type: AWS::EC2::InternetGateway
       Properties:
@@ -46,3 +60,26 @@ Resources:
       Properties:
           InternetGatewayId: !Ref InternetGateway
           VpcId: !Ref VPC    
+
+# Public Subnets
+  PublicSubnet1: 
+      Type: AWS::EC2::Subnet
+      Properties:
+          VpcId: !Ref VPC
+          AvailabilityZone: !Select [ 0, !GetAZs '' ]
+          CidrBlock: !Ref PublicSubnet1CIDR
+          MapPublicIpOnLaunch: true
+          Tags: 
+              - Key: Name 
+                Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+
+  PublicSubnet2: 
+      Type: AWS::EC2::Subnet
+      Properties:
+          VpcId: !Ref VPC
+          AvailabilityZone: !Select [ 1, !GetAZs '' ]
+          CidrBlock: !Ref PublicSubnet2CIDR
+          MapPublicIpOnLaunch: true
+          Tags: 
+              - Key: Name 
+                Value: !Sub ${EnvironmentName} Public Subnet (AZ2)          
