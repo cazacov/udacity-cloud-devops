@@ -8,6 +8,16 @@ Parameters:
       Description: An environment name that will be prefixed to resource names
       Type: String
 
+  InstanceType:
+      Description: AWS instance type. It should be t3.small or better.
+      Type: String
+      Default: t3.medium
+
+  ImageId:
+    Description: AWS image-id. Should include apt package manager. Ubuntu 18 recommended.
+    Type: String
+    Default: ami-003634241a8fcdec0
+
 Resources:
 
 # Web-servers security group        
@@ -50,12 +60,12 @@ Resources:
           aws s3 cp s3://udacity-demo-1/udacity.zip .
           unzip -o udacity.zip
           rm udacity.zip
-      ImageId: ami-003634241a8fcdec0
+      ImageId: !Ref ImageId
       SecurityGroups:
       - Ref: WebServerSecGroup
       IamInstanceProfile: 
         Ref: WebS3InstanceProfile      
-      InstanceType: t3.medium
+      InstanceType: !Ref InstanceType
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
@@ -120,6 +130,7 @@ Resources:
       - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
       SecurityGroups:
       - Ref: LBSecGroup
+      Name: !Sub "${EnvironmentName}-WebAppLB"
   
 # Application load balance listener
   Listener:
@@ -185,3 +196,11 @@ Resources:
           Resource: "*"
       Roles:
       - !Ref S3ReadonlyRole  
+
+# Outputs: 
+Outputs: 
+  LoadBalancerUrl: 
+    Description: Public URL of the load balancer
+    Value: !Join ["", ["http://", !GetAtt WebAppLB.DNSName]]
+    Export:
+      Name: !Sub ${EnvironmentName}-LoadBalancerUrl
