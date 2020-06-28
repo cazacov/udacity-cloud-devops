@@ -18,6 +18,12 @@ aws configure
 
 ### Deployment
 
+To make it easier to understand and debug the deployment process is splitted in two parts:
+- Deploy network infrastructure in CloudFormation stack "udacity-devops-iac-network"
+- Deploy servers in CloudFormation stack "udacity-devops-iac-servers"
+
+The first stack prepares infrastructure and outputs the IDs of created resources in the CloudFormation context. The second script uses  that resources to deploy web-servers, create target group and load-balancer.
+
 #### Deploy network
 
 Create network AWS-Stack from YML:
@@ -42,4 +48,13 @@ Create servers AWS-Stack from YML:
 Update servers network AWS-Stack with the new configuration:
 ```bash
 ./update-servers.sh
+```
+
+## Cleanup
+
+To free resources you should delete both AWS Cloudformation stacks created above:
+
+```bash
+aws cloudformation delete-stack --stack-name udacity-devops-iac-servers
+aws cloudformation delete-stack --stack-name udacity-devops-iac-network
 ```
